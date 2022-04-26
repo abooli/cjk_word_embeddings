@@ -1,56 +1,72 @@
-import gzip
 import numpy
 import argparse
 from re import A
 
-def load_text_vectors(file):
-    with gzip.open(file, 'r') as fp:
-        fp.seek(0)
-        rowcount = 0
-        words = []
-        for _ in fp:
-            rowcount += 1
-        vectors = numpy.zeros((rowcount, 300))
+def load_text_vectors(filename):
+    fp = open(filename, "r", encoding = "utf8")
 
-        fp.seek(0)
-        i = 0
-        for v in fp:
-            s = v.split()
-            words.append(s[0])
-            vectors[i,:] = numpy.array(s[1:])
-            i += 1       
-
-        return words, vectors
-
-
-def save_glove_vectors(word_list, vectors, fp):
-    numpy.save(fp, vectors)
-    numpy.save(fp, word_list)
+    # Read the size of the data
+    fp.seek(0)
+    header = fp.readline().split()
+    rowcount = int(header[0])
+    veclength = int(header[1])
+    
+    # Initialize vectors
+    words = []
+    vectors = numpy.zeros((rowcount, veclength))
+    
+    # Read in the data
+    for (i, v) in enumerate(fp):
+        s = v.split()
+        words.append(s[0])
+        vectors[i,:] = numpy.array(s[1:])
+        i += 1
     fp.close()
 
-def load_glove_vectors(fp):
+    return words, vectors
+
+def save_word_list(word_list, filename):
+    fp = open(filename, "w", encoding = "utf8")
+    fp.writelines("%s\n" % l for l in word_list)
+    fp.close()
+
+def save_vectors_array(vectors, filename):
+    fp = open(filename, "wb")
+    numpy.save(fp, vectors)
+    fp.close()
+
+def load_word_list(filename):
+    fp = open(filename, "r", encoding="utf-8")
+    text = fp.read()
+    words = text.split()
+    return words
+
+def load_vectors_array(filename):
+    fp = open(filename, "rb")
     array = numpy.load(fp, allow_pickle=True)
-    words = list(numpy.load(fp, allow_pickle=True))
-    return (array, words)
+    return array
 
 def get_vec(word, word_list, vectors):
     index = word_list.index(word)
     vector = vectors[index]
     return vector
 
-
 def main(args): 
-    words, vectors = load_text_vectors(args.embeddingFILE)
-    save_glove_vectors(words, vectors, args.npyFILE)
-    
+    words, vectors = load_text_vectors(args.vectorFILE)
+    save_word_list(words, args.txtFILE)
+    save_vectors_array(vectors, args.npyFILE)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("embeddingFILE",
+    parser.add_argument("vectorFILE",
                         # type=argparse.FileType('r'),
-                        help="an embedding .gz file to read from")
+                        help="a GloVe text file to read from")
     parser.add_argument("npyFILE",
-                        type=argparse.FileType('wb'),
+                        # type=argparse.FileType('wb'),
                         help='an .npy file to write the saved numpy data to')
+    parser.add_argument("txtFILE",
+                        # type=argparse.FileType('wb'),
+                        help='an .txt file to write the saved numpy data to')
 
     args = parser.parse_args()
     main(args)
