@@ -14,12 +14,15 @@ def load_text_vectors(filename):
     # Initialize vectors
     words = []
     vectors = numpy.zeros((rowcount, veclength))
+    # print(rowcount, veclength)
     
     # Read in the data
     for (i, v) in enumerate(fp):
         s = v.split()
         words.append(s[0])
         vectors[i,:] = numpy.array(s[1:])
+        # if (i > 20):
+            # return words, vectors
         i += 1
     fp.close()
 
