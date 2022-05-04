@@ -18,10 +18,11 @@ def load_text_vectors(filename):
     
     # Read in the data
     for (i, v) in enumerate(fp):
-        s = v.split()
+        s = v.split(" ")
+        print(i, len(s))
         words.append(s[0])
         vectors[i,:] = numpy.array(s[1:])
-        # if (i > 20):
+        # if (i > 2):
             # return words, vectors
         i += 1
     fp.close()
