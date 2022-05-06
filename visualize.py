@@ -83,8 +83,6 @@ def top_n_neighbors(word, word_list, vectors, n):
     pairs = closest_vectors(vec, word_list, vectors, n)
     return pairs
         
-    
-
 def main(args):
     word_list = embedding.load_word_list(args.txtFILE)
     vectors = embedding.load_vectors_array(args.npyFILE)
