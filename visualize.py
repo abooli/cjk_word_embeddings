@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA  # put this at the top of your program
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
-# from similarity import *
+from similarity import *
 import argparse
 # from itertools import chain
 import numpy as np
@@ -77,6 +77,11 @@ def plot_relations(pca_first, pca_second, pca_relations, filename='plot.png'):
         (x2,y2) = pca_second[i]
         ax.plot((x1, x2), (y1, y2), linewidth=1, color="lightgray")
     plt.savefig(filename)
+
+def top_n_neighbors(word, word_list, vectors, n):
+    vec = embedding.get_vec(word, word_list, vectors)
+    pairs = closest_vectors(vec, word_list, vectors, n)
+    return pairs
         
     
 
@@ -84,7 +89,7 @@ def main(args):
     word_list = embedding.load_word_list(args.txtFILE)
     vectors = embedding.load_vectors_array(args.npyFILE)
     print(len(word_list))
-    fp1 = open(args.file1, "r", encoding="utf-8")
+    """fp1 = open(args.file1, "r", encoding="utf-8")
     fp2 = open(args.file2, "r", encoding="utf-8")
     first_words = fp1.read().split()
     second_words = fp2.read().split()
@@ -95,7 +100,8 @@ def main(args):
     first_pca = perform_pca(first_vec, 2)
     second_pca = perform_pca(second_vec, 2)
     plot(first_pca, second_pca, args.plot)
-
+    """
+    top_n_neighbors('monday', word_list, vectors, 10)
     # relations = read_relations(args.relationsFILE)
     # extract the vectors you want to plot using extract_words
     # left_vec, right_vec, rel = extract_words(vectors, word_list, relations)
@@ -120,9 +126,9 @@ if __name__ == "__main__":
     parser.add_argument("txtFILE",
                         # type=argparse.FileType('wb'),
                         help='an .txt file to write the saved numpy data to')
-    parser.add_argument("file1")
+    #parser.add_argument("file1")
                         # type=argparse.FileType('r'))
-    parser.add_argument("file2")
+    #parser.add_argument("file2")
                         # type=argparse.FileType('r'))
     # parser.add_argument("relationsFILE",
     #                     type=argparse.FileType('r'),

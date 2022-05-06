@@ -23,7 +23,6 @@ def closest_vectors(v, words, array, n):
     result = list(zip(similarity, words))
 
     result.sort(reverse=True)
-    print(result[:n])
     return result[:n]
 
 def main(args):

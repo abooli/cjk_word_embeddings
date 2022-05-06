@@ -24,7 +24,7 @@ def load_text_vectors(filename):
         vectors[i,:] = numpy.array(s[1:])
         # if (i > 2):
             # return words, vectors
-        i += 1
+        # i += 1
     fp.close()
 
     return words, vectors
@@ -54,6 +54,7 @@ def get_vec(word, word_list, vectors):
     index = word_list.index(word)
     vector = vectors[index]
     return vector
+
 
 def main(args): 
     words, vectors = load_text_vectors(args.vectorFILE)
