@@ -1,29 +1,25 @@
-#!/usr/bin/env python3
-
-# import glove
+import embedding
 import numpy
 import argparse
 
 def compute_length(a):
-    a_axis = a.ndim - 1
-    array_lengths = numpy.linalg.norm(a, axis=a_axis)
-    return array_lengths
+    if len(a.shape) == 1:
+        return numpy.linalg.norm(a)
+    return numpy.linalg.norm(a, axis=1)
 
 def cosine_similarity(array1, array2):
     ## Hint: array2 should be passed into dot first, since we're assuming that array2 will be the (potentially) multidimensional array
     ## Like this:  dot_product = numpy.dot(array2, array1)
-    dot_product = numpy.dot(array2, array1)
-    length1 = compute_length(array1)
-    length2 = compute_length(array2)
-    return dot_product / (length1*length2)
-
+    # dot_product = numpy.dot(array1, array2)
+    dot_product = array1 @ array2.T
+    result = dot_product / (compute_length(array1) * compute_length(array2))
+    return result
 
 def closest_vectors(v, words, array, n):
-    similarity = cosine_similarity(v, array)
-    result = list(zip(similarity, words))
-
-    result.sort(reverse=True)
-    return result[:n]
+    similarity = list(cosine_similarity(v, array))
+    pairs = list(zip(similarity, words))
+    pairs.sort(reverse=True)
+    return pairs[:n]
 
 def main(args):
     vectors, word_list = glove.load_glove_vectors(args.npyFILE)
@@ -69,4 +65,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args)
-    
