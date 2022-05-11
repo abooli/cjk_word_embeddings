@@ -31,21 +31,15 @@ def closest_vectors(v, words, array, n):
 def main(args):
     vectors_lang1 = embedding.load_vectors_array(args.npyFILE_lang1)
     vectors_lang2 = embedding.load_vectors_array(args.npyFILE_lang2)
-
     word_list = embedding.load_word_list(args.txtFILE)
-    
     similarity = []
     for i in range(len(word_list)):
         word = word_list[i]
         word_vector1 = vectors_lang1[i,:]
         word_vector2 = vectors_lang2[i,:]
-
-        
         similarity += [cosine_similarity(word_vector1, word_vector2)]
-
     result = list(zip(similarity, word_list))
     fp = open(args.output, "w", encoding = "utf8")
-
     for similarity, word in result:
         fp.write("    * {} (similarity {})\n".format(word, similarity))
         print("    * {} (similarity {})".format(word, similarity))

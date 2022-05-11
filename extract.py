@@ -11,21 +11,21 @@ def main(args):
     vectors = embedding.load_vectors_array(args.npyFILE)
     word_list = embedding.load_word_list(args.txtFILE)
     
-    if args.word:
-        words = [args.word]
-    elif args.file:
+    if args.file:
         words = [x.strip() for x in args.file]
     else: return
 
     vec_list = numpy.zeros((len(words), vectors.shape[1]))
+
     for i in range(len(words)):
         word = words[i]
         word_vector = embedding.get_vec(word, word_list, vectors)
         vec_list[i,:] = word_vector
+    
+    print(vec_list)
 
     if args.listvecFILE:
-        numpy.save(args.listvecFILE, vec_list)
-        print(vec_list.shape)
+        embedding.save_vectors_array(vec_list, args.listvecFILE)
 
    
 if __name__ == "__main__":
@@ -37,7 +37,7 @@ if __name__ == "__main__":
                         help="a text file with one word per line.")
 
     parser.add_argument("--listvecFILE", "-v",
-                        type=argparse.FileType('wb'),
+                        # type=argparse.FileType('wb'),
                         help='an .npy file to write the saved numpy data to')
     parser.add_argument("npyFILE",
                         #type=argparse.FileType('rb'),
